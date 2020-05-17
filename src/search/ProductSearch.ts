@@ -69,7 +69,7 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
     });
   }
 
-  if (options.brands && options.colors.length > 0) {
+  if (options.brands && options.brands.length > 0) {
     query.body['query'].bool.must.push({
       terms: {
         brand: options.brands
