@@ -15,7 +15,6 @@ describe('searchProduct', () => {
       sort: [],
     });
 
-    console.log('results', results);
     expect(results.data.length).toBeGreaterThan(0);
     const foundItemNames = results.data.map((i) => i.name);
 
@@ -110,7 +109,7 @@ describe('searchProduct', () => {
     expect(foundItemNames).toEqual(fishItemNames);
   });
 
-  test.skip('search with sort and pagination', async () => {
+  test('search with sort and pagination', async () => {
     const results = await searchProduct(esClient, {
       limit: 2,
       colors: ['indigo'],
@@ -139,7 +138,7 @@ describe('searchProduct', () => {
     expect(resultsNextpage.data.length).toBeGreaterThan(0);
     const foundItemNames = resultsNextpage.data.map((i) => i.name);
 
-    const fishItemNames = ['Licensed Fresh Mouse', 'Sleek Cotton Table'];
+    const fishItemNames = ['Licensed Wooden Pants', 'Refined Plastic Fish'];
 
     expect(foundItemNames).toEqual(fishItemNames);
   });
@@ -147,14 +146,11 @@ describe('searchProduct', () => {
 
 describe('cursor', () => {
   test.each([
-    ['DFM63Pnrmz', 2000],
-    ['5J_aYxQ9yjm', undefined],
-  ])('build and Parse (%s, %i)', (a, b) => {
+    [{ id: 'DFM63Pnrmz', price: 2000 }, [{ field: 'price', asc: true }]],
+    [{ id: 'DFM63Pnrmz' } as any, [] as any],
+  ])('build and Parse', (a: any, b: any) => {
     const cursor = buildCursor(a, b);
-    const { id, price } = parseCursor(cursor);
-    expect(id).toEqual(a);
-    if (b) {
-      expect(price).toEqual(b);
-    }
+    const parsed = parseCursor(cursor);
+    expect(parsed).toEqual(a);
   });
 });

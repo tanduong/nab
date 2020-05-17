@@ -19,24 +19,21 @@ export type SearchOptions = {
   sort?: SortOptions[];
 };
 
+export function buildCursor(doc: ProductDocument, sort: SortOptions[]): string {
+  const filteredDoc = [...(sort && sort.length > 0 ? sort.map((x) => x.field) : []), 'id'].reduce((agg, k) => {
+    agg[k] = doc[k];
+    return agg;
+  }, {});
 
-export function buildCursor(id: string, price: number): string {
-  let data = `${id}||${price}`;
+  let data = JSON.stringify(filteredDoc);
   let buff = new Buffer(data);
   return buff.toString('base64');
 }
 
 export function parseCursor(cursor: string): { id: string; price?: number } {
   let buff = new Buffer(cursor, 'base64');
-  let text = buff.toString('ascii');
-  const [id, price] = text.split('||');
-  console.log('id, price', id, price);
-
-  if (price) {
-    return { id, price: parseInt(price) };
-  }
-
-  return { id };
+  let text = buff.toString('ascii'); // utf-8?
+  return JSON.parse(text);
 }
 
 export function buildESQuery(indexConfig, options: SearchOptions): RequestParams.Search {
@@ -45,9 +42,9 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
     body: {
       query: {
         bool: {
-          must: []
-        }
-      }
+          must: [],
+        },
+      },
     },
   };
 
@@ -64,67 +61,73 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
   if (options.colors && options.colors.length > 0) {
     query.body['query'].bool.must.push({
       terms: {
-        color: options.colors
-      }
+        color: options.colors,
+      },
     });
   }
 
   if (options.brands && options.brands.length > 0) {
     query.body['query'].bool.must.push({
       terms: {
-        brand: options.brands
-      }
+        brand: options.brands,
+      },
     });
   }
 
   if (options.categories && options.categories.length > 0) {
     query.body['query'].bool.must.push({
       terms: {
-        category: options.categories
-      }
+        category: options.categories,
+      },
     });
   }
 
   // This short comming need a bit more considerations.
   // The limit param alone could support pagination just fine in the first iteration.
-  // if (options.afterCursor) {
-  //   const { id, price } = parseCursor(options.afterCursor);
-  // }
+  if (options.afterCursor) {
+    const cursor = parseCursor(options.afterCursor);
+    query.body['search_after'] = [...(options.sort ? options.sort.map((x) => x.field) : []), 'id'].map(
+      (k) => cursor[k],
+    );
+  }
 
   query.body['size'] = options.limit;
 
   if (options.sort && options.sort.length > 0) {
-    query.body['sort'] = [...options.sort.map(({ field, asc }) => ({ [field]: asc ? 'asc' : 'desc' })), { id: 'asc' }]
+    query.body['sort'] = [...options.sort.map(({ field, asc }) => ({ [field]: asc ? 'asc' : 'desc' })), { id: 'asc' }];
   }
 
   return query;
 }
 
-export function parseESResponse(results): { pageInfo?: { cursor: string }, data: ProductDocument[] } {
+export function parseESResponse(results, sort): { pageInfo?: { cursor: string }; data: ProductDocument[] } {
   try {
     const data = results.body.hits.hits.map((h) => h._source) as ProductDocument[];
     console.debug('data', data);
     const lastItem = data[data.length - 1];
     return {
       pageInfo: {
-        cursor: buildCursor(lastItem.id, lastItem.price)
+        cursor: buildCursor(lastItem, sort),
       },
-      data: data
-    }
+      data: data,
+    };
   } catch (e) {
     console.error('error', e);
     return { data: [] };
   }
 }
 
-export async function searchProduct(client: Client, options: SearchOptions): Promise<{ pageInfo?: { cursor: string }, data: ProductDocument[] }> {
+export async function searchProduct(
+  client: Client,
+  options: SearchOptions,
+): Promise<{ pageInfo?: { cursor: string }; data: ProductDocument[] }> {
   return new Promise((resolve) => {
-    const query = buildESQuery(IndexConfig, options)
-    console.debug('Querying with', JSON.stringify(query, null, 2))
+    const query = buildESQuery(IndexConfig, options);
+    console.debug('Querying with', JSON.stringify(query, null, 2));
     client
       .search(query)
       .then((result: ApiResponse) => {
-        resolve(parseESResponse(result));
+        resolve(parseESResponse(result, options.sort));
       })
       .catch((err: Error) => {
         console.error(err);
@@ -132,4 +135,3 @@ export async function searchProduct(client: Client, options: SearchOptions): Pro
       });
   });
 }
-
