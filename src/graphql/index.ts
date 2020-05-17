@@ -8,7 +8,7 @@ export interface Context {
 }
 
 const context: Context = {
-  esClient: new Client({ node: 'http://localhost:9200' })
+  esClient: new Client({ node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' })
 };
 
 const server = new ApolloServer({
