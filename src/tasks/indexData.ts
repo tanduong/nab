@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch';
-import { bulkIndex, deleteIndex, createIndex } from '../search/Indexer';
-import { IndexConfig } from '../search/IndexConfig';
+import { bulkIndex, deleteIndex, createIndex } from '../services/ProductIndexer';
+import { IndexConfig } from '../common/IndexConfig';
 
 async function main() {
   const client = new Client({ node: 'http://localhost:9200' });

@@ -1,6 +1,6 @@
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch';
-import { ProductDocument } from './ProductDocument';
-import { IndexConfig } from './IndexConfig';
+import { ProductDocument } from '../common/ProductDocument';
+import { IndexConfig } from '../common/IndexConfig';
 
 type SortOptions = {
   field: 'price';
