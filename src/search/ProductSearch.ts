@@ -13,8 +13,8 @@ export type SearchOptions = {
   afterCursor?: string;
   priceMin?: number;
   priceMax?: number;
-  categoryId?: string;
-  branchId?: string;
+  categories?: string[];
+  brands?: string[];
   colors?: string[];
   sort?: SortOptions[];
 };
@@ -42,42 +42,51 @@ export function parseCursor(cursor: string): { id: string; price?: number } {
 export function buildESQuery(indexConfig, options: SearchOptions): RequestParams.Search {
   const query: RequestParams.Search = {
     index: indexConfig.name,
-    body: {},
+    body: {
+      query: {
+        bool: {
+          must: []
+        }
+      }
+    },
   };
 
   if (options.query) {
-    query.body['query'] = {
+    query.body['query'].bool.must.push({
       multi_match: {
         query: options.query,
         type: 'bool_prefix',
         fields: ['name', 'name._2gram', 'name._3gram'],
       },
-    }
+    });
   }
 
-  if (options.query && options.colors) {
-    query.body['query'] = {
-      bool: {
-        must: [
-          {
-            multi_match: {
-              query: options.query,
-              type: 'bool_prefix',
-              fields: ['name', 'name._2gram', 'name._3gram'],
-            },
-          },
-          {
-            terms: {
-              color: options.colors
-            }
-          }
-        ]
+  if (options.colors) {
+    query.body['query'].bool.must.push({
+      terms: {
+        color: options.colors
       }
-    }
+    });
   }
 
-  // This short commings need a bit more considerations.
-  // The limit param alone can support pagination just fine in the first iteration.
+  if (options.brands) {
+    query.body['query'].bool.must.push({
+      terms: {
+        brand: options.brands
+      }
+    });
+  }
+
+  if (options.categories) {
+    query.body['query'].bool.must.push({
+      terms: {
+        category: options.categories
+      }
+    });
+  }
+
+  // This short comming need a bit more considerations.
+  // The limit param alone could support pagination just fine in the first iteration.
   // if (options.afterCursor) {
   //   const { id, price } = parseCursor(options.afterCursor);
   // }
@@ -94,6 +103,7 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
 export function parseESResponse(results): { pageInfo?: { cursor: string }, data: ProductDocument[] } {
   try {
     const data = results.body.hits.hits.map((h) => h._source) as ProductDocument[];
+    console.debug('data', data);
     const lastItem = data[data.length - 1];
     return {
       pageInfo: {

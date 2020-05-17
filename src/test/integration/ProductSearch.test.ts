@@ -40,17 +40,52 @@ describe('searchProduct', () => {
     expect(foundItemNames).toEqual(fishItemNames);
   });
 
-  test('search with color filter only', async () => {
+  test('search with color filter', async () => {
     const results = await searchProduct(esClient, {
       limit: 2,
       colors: ['indigo'],
-      sort: [],
+      sort: [
+        {
+          field: 'price',
+          asc: true,
+        },
+      ],
     });
 
     expect(results.data.length).toBeGreaterThan(0);
     const foundItemNames = results.data.map((i) => i.name);
 
-    const fishItemNames = ['Refined Concrete Ball', 'Refined Steel Fish'];
+    const fishItemNames = ['Rustic Metal Chicken', 'Intelligent Plastic Chicken'];
+
+    expect(foundItemNames).toEqual(fishItemNames);
+  });
+
+  test('search with brand filter', async () => {
+    const results = await searchProduct(esClient, {
+      limit: 2,
+      brands: ['vZViMywOSe'],
+      sort: [{ field: 'price', asc: true }],
+    });
+
+    expect(results.data.length).toBeGreaterThan(0);
+    const foundItemNames = results.data.map((i) => i.name);
+
+    const fishItemNames = ['Licensed Fresh Mouse', 'Unbranded Wooden Computer'];
+
+    expect(foundItemNames).toEqual(fishItemNames);
+  });
+
+  test('search with category filter', async () => {
+    const results = await searchProduct(esClient, {
+      limit: 2,
+      categories: ['home-and-lifestyle'],
+      sort: [{ field: 'price', asc: true }],
+    });
+
+    expect(results.data.length).toBeGreaterThan(0);
+    const foundItemNames = results.data.map((i) => i.name);
+
+    const fishItemNames = ['Licensed Fresh Mouse', 'Sleek Cotton Table'];
 
     expect(foundItemNames).toEqual(fishItemNames);
   });
@@ -70,7 +105,7 @@ describe('searchProduct', () => {
     expect(results.data.length).toBeGreaterThan(0);
     const foundItemNames = results.data.map((i) => i.name);
 
-    const fishItemNames = ['Licensed Fresh Mouse', 'Sleek Cotton Table'];
+    const fishItemNames = ['Rustic Metal Chicken', 'Intelligent Plastic Chicken'];
 
     expect(foundItemNames).toEqual(fishItemNames);
   });
@@ -100,7 +135,6 @@ describe('searchProduct', () => {
         },
       ],
     });
-
 
     expect(resultsNextpage.data.length).toBeGreaterThan(0);
     const foundItemNames = resultsNextpage.data.map((i) => i.name);
