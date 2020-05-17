@@ -40,7 +40,7 @@ function generateProducts(category, count) {
       name: faker.commerce.productName(),
       color: faker.commerce.color(),
       image: `https://i.picsum.photos/id/${Math.round(Math.random() * 1000)}/200/300.jpg`,
-      price: parseFloat(faker.commerce.price(3, 100))
+      price: 100*parseFloat(faker.commerce.price(3, 100))
     })
   }
   console.log('products', products);
@@ -53,19 +53,19 @@ function generateData() {
     products = [...products, ...generateProducts(cat, PRODUCT_PER_CATEGORY)];
   }
 
-  fs.writeFile(path.resolve(__dirname, 'brand.json'), JSON.stringify(brands, null, 2), 'utf8', function (err) {
+  fs.writeFile(path.resolve(__dirname, '../data/brand.json'), JSON.stringify(brands, null, 2), 'utf8', function (err) {
     if (err) {
       console.log(err);
     }
   });
 
-  fs.writeFile(path.resolve(__dirname, 'categories.json'), JSON.stringify(categories, null, 2), 'utf8', function (err) {
+  fs.writeFile(path.resolve(__dirname, '../data/categories.json'), JSON.stringify(categories, null, 2), 'utf8', function (err) {
     if (err) {
       console.log(err);
     }
   });
 
-  fs.writeFile(path.resolve(__dirname, 'products.json'), JSON.stringify(products, null, 2), 'utf8', function (err) {
+  fs.writeFile(path.resolve(__dirname, '../data/products.json'), JSON.stringify(products, null, 2), 'utf8', function (err) {
     if (err) {
       console.log(err);
     }
