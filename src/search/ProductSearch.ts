@@ -57,6 +57,8 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
     }
   }
 
+  query.body['size'] = options.limit;
+
   return query;
 }
 

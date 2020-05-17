@@ -22,15 +22,12 @@ describe('searchProduct', () => {
     const fishItemNames = [
       'Refined Steel Fish',
       'Gorgeous Concrete Fish',
-      'Intelligent Wooden Fish',
-      'Handcrafted Fresh Fish',
-      'Refined Plastic Fish'
     ];
 
     expect(foundItemNames).toEqual(fishItemNames);
   });
 
-  test('search by text with filter', async () => {
+  test('search by text with color filter', async () => {
     const results = await searchProduct(esClient, {
       query: 'fis',
       limit: 2,
@@ -38,7 +35,7 @@ describe('searchProduct', () => {
       sort: []
     });
 
-    console.log('results', results);
+    // console.log('results', results);
     expect(results.length).toBeGreaterThan(0);
     const foundItemNames = results.map(i => i.name);
 
@@ -46,6 +43,26 @@ describe('searchProduct', () => {
       'Refined Plastic Fish'
     ];
 
+    expect(foundItemNames).toEqual(fishItemNames);
+  });
+
+  test('search with color filter only', async () => {
+    const results = await searchProduct(esClient, {
+      limit: 2,
+      colors: ['indigo'],
+      sort: []
+    });
+
+    // console.log('results', results);
+    expect(results.length).toBeGreaterThan(0);
+    const foundItemNames = results.map(i => i.name);
+
+    const fishItemNames = [
+      'Refined Concrete Ball',
+      'Refined Steel Fish',
+    ];
+
+    // console.log('foundItemNames', foundItemNames);
     expect(foundItemNames).toEqual(fishItemNames);
   });
 
