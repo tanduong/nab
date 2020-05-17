@@ -15,7 +15,9 @@
     "@graphql-codegen/typescript": "^1.13.5",
     "@graphql-codegen/typescript-resolvers": "^1.13.5",
     "apollo-server": "^2.13.1",
-    "graphql": "^15.0.0"
+    "graphql": "^15.0.0",
+    "inversify": "^5.0.1",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.13.5",

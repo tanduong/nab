@@ -1,16 +1,18 @@
-import { searchProduct } from '../../services/ProductSearch';
+import { ProductSearch } from '../../services/ProductSearch';
 import { Client } from '@elastic/elasticsearch';
 import { buildCursor, parseCursor } from '../../services/ProductSearch/cursor';
 
-describe('searchProduct', () => {
+describe('ProductSearch.search', () => {
   let esClient: Client;
+  let productSearch: ProductSearch;
 
   beforeAll(() => {
     esClient = new Client({ node: 'http://localhost:9200' });
+    productSearch = new ProductSearch(esClient);
   });
 
   test('search by text', async () => {
-    const results = await searchProduct(esClient, {
+    const results = await productSearch.search({
       query: 'fis',
       limit: 2,
       sort: [
@@ -27,7 +29,7 @@ describe('searchProduct', () => {
   });
 
   test('search by text with color filter', async () => {
-    const results = await searchProduct(esClient, {
+    const results = await productSearch.search({
       query: 'fis',
       limit: 2,
       colors: ['indigo'],
@@ -43,7 +45,7 @@ describe('searchProduct', () => {
   });
 
   test('search with color filter', async () => {
-    const results = await searchProduct(esClient, {
+    const results = await productSearch.search({
       limit: 2,
       colors: ['indigo'],
       sort: [
@@ -63,7 +65,7 @@ describe('searchProduct', () => {
   });
 
   test('search with brand filter', async () => {
-    const results = await searchProduct(esClient, {
+    const results = await productSearch.search({
       limit: 2,
       brands: ['vZViMywOSe'],
       sort: [{ field: 'price', asc: true }],
@@ -78,7 +80,7 @@ describe('searchProduct', () => {
   });
 
   test('search with category filter', async () => {
-    const results = await searchProduct(esClient, {
+    const results = await productSearch.search({
       limit: 2,
       categories: ['home-and-lifestyle'],
       sort: [{ field: 'price', asc: true }],
@@ -93,7 +95,7 @@ describe('searchProduct', () => {
   });
 
   test('search with sort', async () => {
-    const results = await searchProduct(esClient, {
+    const results = await productSearch.search({
       limit: 2,
       colors: ['indigo'],
       sort: [
@@ -113,7 +115,7 @@ describe('searchProduct', () => {
   });
 
   test('search with sort and pagination', async () => {
-    const results = await searchProduct(esClient, {
+    const results = await productSearch.search({
       limit: 2,
       colors: ['indigo'],
       sort: [
@@ -126,7 +128,7 @@ describe('searchProduct', () => {
 
     const cursor = results.pageInfo.cursor;
 
-    const resultsNextpage = await searchProduct(esClient, {
+    const resultsNextpage = await productSearch.search({
       limit: 2,
       colors: ['indigo'],
       afterCursor: cursor,

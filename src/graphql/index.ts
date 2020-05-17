@@ -1,14 +1,16 @@
 import { ApolloServer } from 'apollo-server';
 import { resolvers } from './resolvers';
 import { schema } from './schema';
-import { Client } from '@elastic/elasticsearch';
+import initializer from '../configs/initializer';
+import container from '../configs/container';
+import { interfaces } from 'inversify';
 
 export interface Context {
-  esClient: Client
+  container: interfaces.Container
 }
 
 const context: Context = {
-  esClient: new Client({ node: process.env.ELASTICSEARCH_URL || 'http://localhost:9200' })
+  container: initializer(container)
 };
 
 const server = new ApolloServer({

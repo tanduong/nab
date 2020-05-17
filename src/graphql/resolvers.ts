@@ -1,11 +1,14 @@
-import { searchProduct } from '../services/ProductSearch';
+import { ProductSearch } from '../services/ProductSearch';
 import { ProductListResponse, QuerySearchProductsArgs, Resolvers } from './types';
+import { Types } from '../configs/container';
 
 export const resolvers: Resolvers = {
   Query: {
     searchProducts: async (root, args: QuerySearchProductsArgs, context): Promise<ProductListResponse> => {
       console.debug('resolving searchProducts with args: ', args);
-      return await searchProduct(context.esClient, {
+      const productSearch: ProductSearch = context.container.get(Types.ProductSearch);
+
+      return productSearch.search({
         afterCursor: args.afterCursor,
         query: args.text,
         limit: args.limit,
