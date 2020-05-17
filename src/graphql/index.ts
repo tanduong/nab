@@ -1,6 +1,6 @@
 import { ApolloServer } from 'apollo-server';
-import { resolvers } from "./resolvers";
-import { schema } from "./schema";
+import { resolvers } from './resolvers';
+import { schema } from './schema';
 import { Client } from '@elastic/elasticsearch';
 
 export interface Context {

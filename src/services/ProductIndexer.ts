@@ -1,7 +1,7 @@
 import { Client } from '@elastic/elasticsearch';
 
 export async function deleteIndex(client: Client, indexConfig) {
-  return await client.indices.delete({
+  return client.indices.delete({
     index: indexConfig.name,
   });
 }
@@ -9,7 +9,7 @@ export async function deleteIndex(client: Client, indexConfig) {
 export async function createIndex(client: Client, indexConfig) {
   const INDEX_EXISTED_ERROR = 400;
 
-  return await client.indices.create(
+  return client.indices.create(
     {
       index: indexConfig.name,
       body: {

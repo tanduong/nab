@@ -1,4 +1,4 @@
-import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch';
+import { ApiResponse, Client, RequestParams } from '@elastic/elasticsearch';
 import { ProductDocument } from '../common/ProductDocument';
 import { IndexConfig } from '../common/IndexConfig';
 

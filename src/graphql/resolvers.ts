@@ -1,5 +1,5 @@
 import { searchProduct } from '../services/ProductSearch';
-import { QuerySearchProductsArgs, ProductListResponse, Resolvers } from './types';
+import { ProductListResponse, QuerySearchProductsArgs, Resolvers } from './types';
 
 export const resolvers: Resolvers = {
   Query: {

@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch';
-import { bulkIndex, deleteIndex, createIndex } from '../services/ProductIndexer';
+import { Client } from '@elastic/elasticsearch';
+import { bulkIndex, createIndex, deleteIndex } from '../services/ProductIndexer';
 import { IndexConfig } from '../common/IndexConfig';
 
 async function main() {
@@ -13,4 +13,4 @@ async function main() {
   await bulkIndex(client, data, IndexConfig).catch(console.log);
 }
 
-main();
+main().then(console.log).catch(console.error);

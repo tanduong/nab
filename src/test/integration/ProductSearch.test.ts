@@ -1,4 +1,4 @@
-import { searchProduct, buildCursor, parseCursor } from '../../services/ProductSearch';
+import { buildCursor, parseCursor, searchProduct } from '../../services/ProductSearch';
 import { Client } from '@elastic/elasticsearch';
 
 describe('searchProduct', () => {
@@ -12,13 +12,15 @@ describe('searchProduct', () => {
     const results = await searchProduct(esClient, {
       query: 'fis',
       limit: 2,
-      sort: [],
+      sort: [
+        { field: 'price', asc: true }
+      ],
     });
 
     expect(results.data.length).toBeGreaterThan(0);
     const foundItemNames = results.data.map((i) => i.name);
 
-    const fishItemNames = ['Refined Steel Fish', 'Gorgeous Concrete Fish'];
+    const fishItemNames = ['Handcrafted Fresh Fish', 'Gorgeous Concrete Fish'];
 
     expect(foundItemNames).toEqual(fishItemNames);
   });
