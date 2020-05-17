@@ -82,8 +82,6 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
     });
   }
 
-  // This short comming need a bit more considerations.
-  // The limit param alone could support pagination just fine in the first iteration.
   if (options.afterCursor) {
     const cursor = parseCursor(options.afterCursor);
     query.body['search_after'] = [...(options.sort ? options.sort.map((x) => x.field) : []), 'id'].map(
