@@ -1,4 +1,4 @@
-import { searchProduct, buildCursor, parseCursor } from '../../search/ProductSearch';
+import { searchProduct, buildCursor, parseCursor } from '../../services/ProductSearch';
 import { Client } from '@elastic/elasticsearch';
 
 describe('searchProduct', () => {

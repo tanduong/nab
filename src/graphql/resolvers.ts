@@ -1,4 +1,4 @@
-import { searchProduct } from '../search/ProductSearch';
+import { searchProduct } from '../services/ProductSearch';
 import { QuerySearchProductsArgs, ProductListResponse, Resolvers } from './types';
 
 export const resolvers: Resolvers = {
