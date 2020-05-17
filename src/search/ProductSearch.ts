@@ -1,5 +1,6 @@
 import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch';
 import { ProductDocument } from './ProductDocument';
+import { IndexConfig } from './IndexConfig';
 
 type SortOptions = {
   field: 'price';
@@ -18,9 +19,9 @@ export type SearchOptions = {
   sort?: SortOptions[];
 };
 
-export function buildESQuery(options: SearchOptions): RequestParams.Search {
+export function buildESQuery(indexConfig, options: SearchOptions): RequestParams.Search {
   const query: RequestParams.Search = {
-    index: 'product',
+    index: indexConfig.name,
     body: {},
   };
 
@@ -40,29 +41,24 @@ export function buildESQuery(options: SearchOptions): RequestParams.Search {
 export function parseESResponse(results): ProductDocument[] {
   try {
     return results.body.hits.hits.map((h) => h._source);
-  } catch {
+  } catch (e) {
+    console.error('error', e);
     return [];
   }
 }
 
-export class ProductSearch {
-  client: Client;
 
-  constructor(client: Client) {
-    this.client = client;
-  }
-
-  async search(options: SearchOptions): Promise<ProductDocument[]> {
-    return new Promise((resolve, reject) => {
-      this.client
-        .search(buildESQuery(options))
-        .then((result: ApiResponse) => {
-          resolve(parseESResponse(result));
-        })
-        .catch((err: Error) => {
-          console.error(err);
-          throw err;
-        });
-    });
-  }
+export async function searchProduct(client: Client, options: SearchOptions): Promise<ProductDocument[]> {
+  return new Promise((resolve) => {
+    client
+      .search(buildESQuery(IndexConfig, options))
+      .then((result: ApiResponse) => {
+        resolve(parseESResponse(result));
+      })
+      .catch((err: Error) => {
+        console.error(err);
+        throw err;
+      });
+  });
 }
+

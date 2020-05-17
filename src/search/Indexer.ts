@@ -1,72 +1,28 @@
-import { Client, ApiResponse, RequestParams } from '@elastic/elasticsearch';
-import * as fs from 'fs';
-import * as path from 'path';
-const client = new Client({ node: 'http://localhost:9200' });
+import { Client } from '@elastic/elasticsearch';
 
-const IndexConfig = {
-  name: 'product',
-  settings: {
-    index: {
-      analysis: {
-        filter: {
-          shingle: {
-            type: 'shingle',
-            min_gram_size: 2,
-            max_gram_size: 3,
-          },
-        },
-        analyzer: {
-          trigram: {
-            type: 'custom',
-            tokenizer: 'standard',
-            filter: ['shingle', 'asciifolding', 'lowercase'],
-          },
-        },
-      },
-    },
-  },
-  mappings: {
-    properties: {
-      id: { type: 'keyword' },
-      brand: { type: 'keyword' },
-      category: { type: 'keyword' },
-      name: {
-        type: 'search_as_you_type',
-        analyzer: 'trigram',
-        boost: 2,
-      },
-      color: { type: 'keyword' },
-      image: { type: 'keyword' },
-      price: { type: 'integer' },
-    },
-  },
-};
-
-async function deleteIndex(indexConfig) {
+export async function deleteIndex(client: Client, indexConfig) {
   return await client.indices.delete({
-    index: IndexConfig.name,
+    index: indexConfig.name,
   });
 }
 
-async function createIndex(indexConfig) {
+export async function createIndex(client: Client, indexConfig) {
   const INDEX_EXISTED_ERROR = 400;
 
   return await client.indices.create(
     {
-      index: IndexConfig.name,
+      index: indexConfig.name,
       body: {
-        mappings: IndexConfig.mappings,
+        mappings: indexConfig.mappings,
+        settings: indexConfig.settings,
       },
     },
     { ignore: [INDEX_EXISTED_ERROR] },
   );
 }
 
-async function runBatch(dataset) {
-  await deleteIndex(IndexConfig);
-  await createIndex(IndexConfig);
-
-  const body = dataset.flatMap((doc) => [{ index: { _index: IndexConfig.name } }, doc]);
+export async function bulkIndex(client: Client, dataset, indexConfig) {
+  const body = dataset.flatMap((doc) => [{ index: { _index: indexConfig.name } }, doc]);
 
   const { body: bulkResponse } = await client.bulk({ refresh: 'true', body });
 
@@ -90,45 +46,8 @@ async function runBatch(dataset) {
         });
       }
     });
-    console.log(erroredDocuments);
+    console.error(erroredDocuments);
+  } else {
+    console.log('data indexed!')
   }
-
-  const { body: count } = await client.count({ index: 'tweets' });
-  console.log(count);
 }
-
-async function search(text) {
-  return new Promise((resolve, reject) => {
-    const params: RequestParams.Search = {
-      index: 'product',
-      body: {
-        query: {
-          multi_match: {
-            query: text,
-            type: 'bool_prefix',
-            fields: ['name', 'name._2gram', 'name._3gram'],
-          },
-        },
-        sort: { price: 'asc' },
-      },
-    };
-
-    client
-      .search(params)
-      .then((result: ApiResponse) => {
-        console.log(result.body.hits.hits);
-        resolve(result);
-      })
-      .catch((err: Error) => {
-        console.error(err);
-        resolve(err);
-      });
-  });
-}
-
-
-const data = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../data/products.json'), 'utf8'));
-console.log('data', data);
-
-runBatch(data).catch(console.log);
-search('lifestyle')
