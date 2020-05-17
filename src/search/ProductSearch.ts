@@ -53,11 +53,14 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
           }
         ]
       }
-
     }
   }
 
   query.body['size'] = options.limit;
+
+  if (options.sort && options.sort.length > 0) {
+    query.body['sort'] = options.sort.map(({ field, asc }) => ({ [field]: asc ? 'asc' : 'desc' }))
+  }
 
   return query;
 }
@@ -74,8 +77,10 @@ export function parseESResponse(results): ProductDocument[] {
 
 export async function searchProduct(client: Client, options: SearchOptions): Promise<ProductDocument[]> {
   return new Promise((resolve) => {
+    const query = buildESQuery(IndexConfig, options)
+    console.debug('Querying with', JSON.stringify(query, null, 2))
     client
-      .search(buildESQuery(IndexConfig, options))
+      .search(query)
       .then((result: ApiResponse) => {
         resolve(parseESResponse(result));
       })
