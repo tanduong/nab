@@ -6,6 +6,9 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
+    "types": ["reflect-metadata", "node", "jest"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "lib": ["es2019"]
-  },
+  }
 }

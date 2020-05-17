@@ -1,6 +1,6 @@
 import { ApiResponse, Client } from '@elastic/elasticsearch';
 import { ProductDocument } from '../../common/ProductDocument';
-import { IndexConfig } from '../../common/IndexConfig';
+import { IndexConfig } from '../../configs/IndexConfig';
 import { buildESQuery } from './buildESQuery';
 import { transformResponse } from './transformResponse';
 

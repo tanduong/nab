@@ -40,14 +40,14 @@ function generateProducts(category, count) {
       name: faker.commerce.productName(),
       color: faker.commerce.color(),
       image: `https://i.picsum.photos/id/${Math.round(Math.random() * 1000)}/200/300.jpg`,
-      price: 100*parseFloat(faker.commerce.price(3, 100))
+      price: 100 * parseFloat(faker.commerce.price(3, 100))
     })
   }
   console.log('products', products);
   return products;
 }
 
-function generateData() {
+function main() {
   let products = []
   for (const cat of categories) {
     products = [...products, ...generateProducts(cat, PRODUCT_PER_CATEGORY)];
@@ -72,4 +72,4 @@ function generateData() {
   });
 }
 
-generateData();
+main();
