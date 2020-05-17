@@ -1,5 +1,6 @@
-import { buildCursor, parseCursor, searchProduct } from '../../services/ProductSearch';
+import { searchProduct } from '../../services/ProductSearch';
 import { Client } from '@elastic/elasticsearch';
+import { buildCursor, parseCursor } from '../../services/ProductSearch/cursor';
 
 describe('searchProduct', () => {
   let esClient: Client;
