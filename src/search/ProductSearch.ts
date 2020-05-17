@@ -95,6 +95,8 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
 
   if (options.sort && options.sort.length > 0) {
     query.body['sort'] = [...options.sort.map(({ field, asc }) => ({ [field]: asc ? 'asc' : 'desc' })), { id: 'asc' }];
+  } else {
+    query.body['sort'] = [{ id: 'asc' }];
   }
 
   return query;
