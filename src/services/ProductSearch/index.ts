@@ -2,7 +2,7 @@ import { ApiResponse, Client } from '@elastic/elasticsearch';
 import { ProductDocument } from '../../common/ProductDocument';
 import { IndexConfig } from '../../common/IndexConfig';
 import { buildESQuery } from './buildESQuery';
-import { parseESResponse } from './parseESResponse';
+import { transformResponse } from './transformResponse';
 
 export type SortOptions = {
   field: 'price';
@@ -31,7 +31,7 @@ export async function searchProduct(
     client
       .search(query)
       .then((result: ApiResponse) => {
-        resolve(parseESResponse(result, options.sort));
+        resolve(transformResponse(result, options.sort));
       })
       .catch((err: Error) => {
         console.error(err);

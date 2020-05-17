@@ -1,6 +1,6 @@
 import { ProductDocument } from '../../common/ProductDocument';
 import { buildCursor } from './cursor';
-export function parseESResponse(results, sort): {
+export function transformResponse(results, sort): {
   pageInfo?: {
     cursor: string;
   };
