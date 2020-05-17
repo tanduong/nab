@@ -61,7 +61,7 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
     });
   }
 
-  if (options.colors) {
+  if (options.colors && options.colors.length > 0) {
     query.body['query'].bool.must.push({
       terms: {
         color: options.colors
@@ -69,7 +69,7 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
     });
   }
 
-  if (options.brands) {
+  if (options.brands && options.colors.length > 0) {
     query.body['query'].bool.must.push({
       terms: {
         brand: options.brands
@@ -77,7 +77,7 @@ export function buildESQuery(indexConfig, options: SearchOptions): RequestParams
     });
   }
 
-  if (options.categories) {
+  if (options.categories && options.categories.length > 0) {
     query.body['query'].bool.must.push({
       terms: {
         category: options.categories
