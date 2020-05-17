@@ -33,6 +33,12 @@ export type QuerySearchProductsArgs = {
 export type ProductListResponse = {
    __typename?: 'ProductListResponse';
   data: Array<Product>;
+  pageInfo?: Maybe<PageInfo>;
+};
+
+export type PageInfo = {
+   __typename?: 'PageInfo';
+  cursor: Scalars['String'];
 };
 
 export type Product = {
@@ -138,6 +144,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   ProductListResponse: ResolverTypeWrapper<ProductListResponse>,
+  PageInfo: ResolverTypeWrapper<PageInfo>,
   Product: ResolverTypeWrapper<Product>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   SortField: SortField,
@@ -153,6 +160,7 @@ export type ResolversParentTypes = {
   Query: {},
   Int: Scalars['Int'],
   ProductListResponse: ProductListResponse,
+  PageInfo: PageInfo,
   Product: Product,
   ID: Scalars['ID'],
   SortField: SortField,
@@ -167,6 +175,12 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ProductListResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProductListResponse'] = ResolversParentTypes['ProductListResponse']> = {
   data?: Resolver<Array<ResolversTypes['Product']>, ParentType, ContextType>,
+  pageInfo?: Resolver<Maybe<ResolversTypes['PageInfo']>, ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+};
+
+export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = {
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 };
 
@@ -187,6 +201,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>,
   ProductListResponse?: ProductListResponseResolvers<ContextType>,
+  PageInfo?: PageInfoResolvers<ContextType>,
   Product?: ProductResolvers<ContextType>,
   Upload?: GraphQLScalarType,
 };

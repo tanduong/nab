@@ -19,6 +19,11 @@ export const schema = gql`
 
   type ProductListResponse {
     data: [Product!]!
+    pageInfo: PageInfo
+  }
+
+  type PageInfo {
+    cursor: String!
   }
 
   type Product {
