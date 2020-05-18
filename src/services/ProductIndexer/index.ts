@@ -15,7 +15,12 @@ export class ProductIndexer {
   }
 
   async indexProducts(data) {
-    await deleteIndex(this.client, this.indexConfig);
+    try {
+      await deleteIndex(this.client, this.indexConfig);
+    } catch (e) {
+      // Could be just index not found.
+      console.log('e', e);
+    }
     await createIndex(this.client, this.indexConfig);
     return bulkIndex(this.client, data, this.indexConfig);
   }
