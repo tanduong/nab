@@ -10,3 +10,22 @@ npm install
 npm run seed
 npm run dev
 ```
+
+Then you can visit http://localhost:4000/ and run a test query:
+
+```graphql
+{
+  searchProducts(text: "Intel", limit: 2, sort: [], brands: [], categories: [], colors: []) {
+    pageInfo {
+      cursor
+    }
+    data {
+      name
+      id
+      color
+      brand
+      category
+    }
+  }
+}
+```
