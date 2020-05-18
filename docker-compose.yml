@@ -9,7 +9,7 @@ services:
       - discovery.seed_hosts=es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
     ulimits:
       memlock:
         soft: -1
@@ -18,6 +18,11 @@ services:
       - data01:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9200']
+      interval: 30s
+      timeout: 10s
+      retries: 5
     networks:
       - elastic
 
@@ -30,7 +35,7 @@ services:
       - discovery.seed_hosts=es01,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
     ulimits:
       memlock:
         soft: -1
@@ -51,7 +56,7 @@ services:
       - discovery.seed_hosts=es01,es02
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
     ulimits:
       memlock:
         soft: -1
@@ -74,22 +79,24 @@ services:
     networks:
       - elastic
 
-  # pg:
-  #   image: postgres
-  #   restart: always
-  #   environment:
-  #     POSTGRES_PASSWORD: example
-  #     POSTGRES_USER: nab
-  #   volumes:
-  #     - pg-data:/var/lib/postgresql/data/
-  #   ports:
-  #     - 5434:5432
-  #   networks:
-  #     - pg
+  app:
+    build: .
+    # command: npx nodemon
+    depends_on:
+      es01:
+        condition: service_healthy
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/src
+    environment:
+      NODE_ENV: development
+      ELASTICSEARCH_URL: http://es01:9200
+      ELASTICSEARCH_HOSTS: http://es01:9200
+    networks:
+      - elastic
 
 volumes:
-  pg-data:
-    driver: local
   data01:
     driver: local
   data02:
@@ -100,5 +107,3 @@ volumes:
 networks:
   elastic:
     driver: bridge
-  # pg:
-  #   driver: bridge

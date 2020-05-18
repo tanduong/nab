@@ -1,14 +1,9 @@
 # Run the app
 
-_Require nodeJS 12 or later._
+_Require nodeJS 13 or later._
 
 ```bash
 docker-compose -f docker-compose.yml up
-
-# In another tab
-npm install
-npm run seed
-npm run dev
 ```
 
 Then you can visit http://localhost:4000/ and run a test query:
