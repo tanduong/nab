@@ -87,6 +87,9 @@ services:
         condition: service_healthy
     ports:
       - 4000:4000
+    command: >
+      sh -c "npm run seed &&
+             npm run dev"
     volumes:
       - .:/src
     environment:
