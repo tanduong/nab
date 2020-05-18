@@ -1,4 +1,4 @@
-version: '2.2'
+version: "2.2"
 services:
   es01:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
@@ -9,7 +9,7 @@ services:
       - discovery.seed_hosts=es02,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ulimits:
       memlock:
         soft: -1
@@ -30,7 +30,7 @@ services:
       - discovery.seed_hosts=es01,es03
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ulimits:
       memlock:
         soft: -1
@@ -51,7 +51,7 @@ services:
       - discovery.seed_hosts=es01,es02
       - cluster.initial_master_nodes=es01,es02,es03
       - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms256m -Xmx256m'
+      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ulimits:
       memlock:
         soft: -1
@@ -74,18 +74,18 @@ services:
     networks:
       - elastic
 
-  pg:
-    image: postgres
-    restart: always
-    environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_USER: nab
-    volumes:
-      - pg-data:/var/lib/postgresql/data/
-    ports:
-      - 5434:5432
-    networks:
-      - pg
+  # pg:
+  #   image: postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_PASSWORD: example
+  #     POSTGRES_USER: nab
+  #   volumes:
+  #     - pg-data:/var/lib/postgresql/data/
+  #   ports:
+  #     - 5434:5432
+  #   networks:
+  #     - pg
 
 volumes:
   pg-data:
@@ -100,5 +100,5 @@ volumes:
 networks:
   elastic:
     driver: bridge
-  pg:
-    driver: bridge
+  # pg:
+  #   driver: bridge
