@@ -29,3 +29,9 @@ Then you can visit http://localhost:4000/ and run a test query:
   }
 }
 ```
+
+## For codegen
+
+```
+npm run codegen
+```
