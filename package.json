@@ -10,6 +10,7 @@
     "test": "jest",
     "dev": "npx ts-node src/graphql/index.ts",
     "seed": "npx ts-node src/tasks/indexData.ts",
+    "codegen": "npx graphql-codegen",
     "build": "tsc"
   },
   "keywords": [],
