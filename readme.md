@@ -1,5 +1,7 @@
 # Run the app
 
+_Require nodeJS 12 or later._
+
 ```bash
 docker-compose -f docker-compose.withapp.yml build
 docker-compose -f docker-compose.withapp.yml up
